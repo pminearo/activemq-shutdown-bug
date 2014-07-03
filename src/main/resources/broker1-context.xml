@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+  		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+  		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<amq:broker id="broker1" brokerName="broker1" persistent="false" useJmx="false" useShutdownHook="true">
+
+		<amq:transportConnectors>
+			<amq:transportConnector name="openwire1" uri="tcp://localhost:60606" />
+		</amq:transportConnectors>
+
+		<amq:destinations>
+			<amq:queue physicalName="broker1ToBroker2Queue" />
+			<amq:queue physicalName="broker2ToBroker1Queue" />
+		</amq:destinations>
+
+	</amq:broker>
+
+</beans>

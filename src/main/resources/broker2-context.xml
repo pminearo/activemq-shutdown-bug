@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+  		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+  		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<bean id="remoteFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="failover:(tcp://localhost:60606)" />
+	</bean>
+
+	<amq:broker id="broker2" brokerName="broker2" persistent="false" useJmx="false" useShutdownHook="true">
+
+		<amq:transportConnectors>
+			<amq:transportConnector name="openwire2" uri="tcp://localhost:61616" />
+		</amq:transportConnectors>
+
+		<amq:jmsBridgeConnectors>
+			<amq:jmsQueueConnector outboundQueueConnectionFactory="#remoteFactory">
+				<amq:inboundQueueBridges>
+					<amq:inboundQueueBridge inboundQueueName="broker1ToBroker2Queue" localQueueName="broker1ToBroker2Queue" />
+				</amq:inboundQueueBridges>
+				<amq:outboundQueueBridges>
+					<amq:outboundQueueBridge outboundQueueName="broker2ToBroker1Queue" localQueueName="broker2ToBroker1Queue" />
+				</amq:outboundQueueBridges>
+			</amq:jmsQueueConnector>
+		</amq:jmsBridgeConnectors>
+
+		<amq:destinations>
+			<amq:queue physicalName="broker1ToBroker2Queue" />
+			<amq:queue physicalName="broker2ToBroker1Queue" />
+		</amq:destinations>
+
+	</amq:broker>
+
+</beans>
